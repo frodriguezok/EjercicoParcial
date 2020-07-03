@@ -1,0 +1,107 @@
+import parcelas.*
+import plantas.*
+import INTA.*
+test "Parcelas" {
+
+	const parcela1 = new ParcelaEcologica(ancho = 20, largo = 1, horasDeSol = 10)
+	
+	assert.equals(20, parcela1.superficie())
+	assert.equals(4, parcela1.cantidadMaxima())
+	
+	//Plantamos en parcela1
+	
+	const soja1 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	const soja2 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	const soja3 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	const soja4 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	const soja5 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	parcela1.plantarUnaPlanta(soja1)
+	parcela1.plantarUnaPlanta(soja2)
+	parcela1.plantarUnaPlanta(soja3)
+	parcela1.plantarUnaPlanta(soja4)
+	
+	assert.notThat(parcela1.tieneSangreJoven())
+	assert.notThat(parcela1.hayLugar())
+	
+	//Como no hay lugar dentro de la parcela 
+	//debe tirar error al querer plantar otra planta
+	assert.equals("No cumple las condiciones",parcela1.plantarUnaPlanta(soja5))
+}
+
+test "ParcelasIdeales" {
+
+	const parcela1 = new ParcelaEcologica(ancho = 20, largo = 4, horasDeSol = 10)
+	const menta1 = new Menta(altura = 1, anioDeObtencion = 2005)
+	const quinoa1 = new Quinoa(altura = 1, anioDeObtencion = 2005, espacio = 0.4)
+	const soja1 = new Soja(altura = 1.2, anioDeObtencion = 2010)
+	//Plantamos en parcela1
+	
+
+	parcela1.plantarUnaPlanta(soja1)
+	parcela1.plantarUnaPlanta(menta1)
+	parcela1.plantarUnaPlanta(quinoa1)
+	
+	assert.notThat(parcela1.tieneSangreJoven())
+	assert.that(parcela1.hayLugar())
+	assert.that(parcela1.esIdeal(menta1))
+	assert.that(parcela1.esIdeal(quinoa1))
+	assert.notThat(parcela1.esIdeal(soja1))
+}
+
+test "Asociacion de plantas" {
+
+	const parcela1 = new ParcelaEcologica(ancho = 20, largo = 4, horasDeSol = 10)
+	const parcela2 = new ParcelaIndustrial(ancho = 20, largo = 4, horasDeSol = 10)
+	const menta1 = new Menta(altura = 1, anioDeObtencion = 2016)
+	const quinoa1 = new Quinoa(altura = 1, anioDeObtencion = 2015, espacio = 0.4)
+	const soja1 = new Soja(altura = 1.2, anioDeObtencion = 2013)
+	//Plantamos en parcela1
+	
+
+	parcela1.plantarUnaPlanta(soja1)
+	parcela1.plantarUnaPlanta(menta1)
+	parcela1.plantarUnaPlanta(quinoa1)
+	
+	assert.that(parcela1.tieneSangreJoven())
+	assert.notThat(parcela1.seAsociaBien(soja1))
+	assert.that(parcela1.seAsociaBien(menta1))
+	assert.that(parcela1.seAsociaBien(quinoa1))
+	
+	//Plantamos en parcela2
+	
+	parcela2.plantarUnaPlanta(soja1)
+	parcela2.plantarUnaPlanta(menta1)
+	
+	assert.notThat(menta1.esFuerte())
+	assert.that(parcela2.tieneSangreJoven())
+	assert.that(parcela2.seAsociaBien(soja1))
+	assert.notThat(parcela2.seAsociaBien(menta1))
+	
+}
+
+test "INTA" {
+
+	const parcela1 = new ParcelaEcologica(ancho = 20, largo = 4, horasDeSol = 10)
+	const parcela2 = new ParcelaIndustrial(ancho = 20, largo = 4, horasDeSol = 10)
+	const menta1 = new Menta(altura = 1, anioDeObtencion = 2016)
+	const quinoa1 = new Quinoa(altura = 1, anioDeObtencion = 2015, espacio = 0.4)
+	const soja1 = new Soja(altura = 1.2, anioDeObtencion = 2013)
+	//Plantamos en parcela1
+	
+
+	parcela1.plantarUnaPlanta(soja1)
+	parcela1.plantarUnaPlanta(menta1)
+	parcela1.plantarUnaPlanta(quinoa1)
+	
+	
+	//Plantamos en parcela2
+	
+	parcela2.plantarUnaPlanta(soja1)
+	parcela2.plantarUnaPlanta(menta1)
+	
+	inta.agregarParcela(parcela1)
+	inta.agregarParcela(parcela2)
+	
+	assert.equals(2.5, inta.promedioDePlantas())
+	
+}
